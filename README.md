@@ -1,7 +1,3 @@
-Here's a README for your repository:
-
----
-
 # Learning Advanced Concepts of ROS2
 
 Welcome to the **Learning Advanced Concepts of ROS2** repository! This repository contains the source code and learning materials as I explore and master advanced concepts in ROS2.
@@ -75,7 +71,3 @@ Contributions are welcome! If you have suggestions for improving the examples or
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to modify this README to fit your needs!
