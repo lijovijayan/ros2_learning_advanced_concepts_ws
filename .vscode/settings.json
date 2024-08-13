@@ -1,0 +1,35 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/lijovijayan/projects/DUM-E/install/dum_e_description/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/DUM-E/install/dum_e_controller/lib/python3.10/site-packages",
+        "/home/lijovijayan/ros2_ws/install/service_example/lib/python3.10/site-packages",
+        "/home/lijovijayan/ros2_ws/install/number_monster/lib/python3.10/site-packages",
+        "/home/lijovijayan/ros2_ws/install/my_py_pkg/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/line_follower_ws/install/line_follower_description/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/line_follower_ws/install/line_follower_controller/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/luna_ws/install/luna_srvs/local/lib/python3.10/dist-packages",
+        "/home/lijovijayan/projects/luna_ws/install/luna_msgs/local/lib/python3.10/dist-packages",
+        "/home/lijovijayan/projects/luna_ws/install/lidar/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/luna_ws/install/controller/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/luna_ws/install/camera/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/lijovijayan/projects/DUM-E/install/dum_e_description/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/DUM-E/install/dum_e_controller/lib/python3.10/site-packages",
+        "/home/lijovijayan/ros2_ws/install/service_example/lib/python3.10/site-packages",
+        "/home/lijovijayan/ros2_ws/install/number_monster/lib/python3.10/site-packages",
+        "/home/lijovijayan/ros2_ws/install/my_py_pkg/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/line_follower_ws/install/line_follower_description/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/line_follower_ws/install/line_follower_controller/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/luna_ws/install/luna_srvs/local/lib/python3.10/dist-packages",
+        "/home/lijovijayan/projects/luna_ws/install/luna_msgs/local/lib/python3.10/dist-packages",
+        "/home/lijovijayan/projects/luna_ws/install/lidar/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/luna_ws/install/controller/lib/python3.10/site-packages",
+        "/home/lijovijayan/projects/luna_ws/install/camera/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "cmake.configureOnOpen": false
+}
