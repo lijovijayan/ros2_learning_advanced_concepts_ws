@@ -29,10 +29,10 @@ class CountUntilClient(Node):
     def goal_response_callback(self, future_response):
         self._goal_handle: ClientGoalHandle = future_response.result()
         if self._goal_handle.accepted:
-            self.get_logger().info(f"Request got accepted!")
+            self.get_logger().info(f"Goal got accepted!")
             self._goal_handle.get_result_async().add_done_callback(self.goal_result_callback)
         else:
-            self.get_logger().error(f"Request got rejected!")
+            self.get_logger().error(f"Goal got rejected!")
             
         # self._timer = self.create_timer(2.0, self.cancel_goal)
         
@@ -46,9 +46,9 @@ class CountUntilClient(Node):
         self.get_logger().info(f"Feedback from server: {feedback.current_number}")
         
         # Canceling the goal from client
-        if feedback.current_number == 2:
-            self.get_logger().warn(f"Requesting cancelation")
-            self._goal_handle.cancel_goal_async()
+        # if feedback.current_number == 2:
+        #     self.get_logger().warn(f"Requesting cancelation")
+        #     self._goal_handle.cancel_goal_async()
             
     def goal_result_callback(self, future_result):
         status = future_result.result().status
@@ -56,7 +56,6 @@ class CountUntilClient(Node):
         
         if status == GoalStatus.STATUS_SUCCEEDED:
             self.get_logger().info(f"Goal Succeed!")
-            self.get_logger().info(f"Result received: {result.reached_number}")
         elif status == GoalStatus.STATUS_ABORTED:
             self.get_logger().error(f"Goal Aborted")
         elif status == GoalStatus.STATUS_CANCELED:
@@ -64,6 +63,8 @@ class CountUntilClient(Node):
             self.get_logger().error(f"Goal Aborted")
         elif status == GoalStatus.STATUS_CANCELING:
             self.get_logger().error(f"Goal Canceling")
+        # The result can be send back from the server while canceling the goal
+        self.get_logger().info(f"Result received: {result.reached_number}")
         
 def main(args=None):
     rclpy.init(args=args)

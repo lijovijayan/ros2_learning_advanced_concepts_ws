@@ -4,32 +4,71 @@ from rclpy.node import Node
 from rclpy.action import ActionServer, GoalResponse
 from rclpy.action.server import ServerGoalHandle, CancelResponse
 from ros2_learning_advanced_concepts_interfaces.action import CountUntil
-# To handle the cencel requests
+# To handle the cancel requests
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
-# End - To handle the cencel requests
+# End - To handle the cancel requests
+
+# To handle usage of same variable in multiple threads
+import threading
+# End - To handle usage of same variable in multiple threads
+from typing import List
 
 class CountUntilServer(Node):
     def __init__(self):
         super().__init__('count_until_server')
+        self._goal_handle: ServerGoalHandle = None
+        self._goal_lock = threading.Lock()
+        # A queue to store the new goals when another one is already executing
+        self._goal_queue: List[ServerGoalHandle] = []
+        
         self._count_until_server = ActionServer(self, CountUntil, 'count_until',\
-            cancel_callback=self.cancel_callback,\
             goal_callback=self.goal_callback,\
+            handle_accepted_callback=self.handle_accepted_goal,\
             execute_callback=self.execute_callback,\
+            cancel_callback=self.cancel_callback,\
+            # Execute all the callbacks parallelly (this will also accept all goals from infinite number of clients)
             callback_group=ReentrantCallbackGroup()\
+                
+            # Execute all the callbacks parallelly (this will also accept all goals from infinite number of clients)
+            # callback_group=ReentrantCallbackGroup()\
         )
         self.get_logger().info("Action server has been started!")
     
     def goal_callback(self, goal_request: CountUntil.Goal):
         self.get_logger().info('Received a goal!')
+        
+        # Policy: refuse new goal if current goal is still active
+        # with self._goal_lock:
+        #     if self._goal_handle is not None and self._goal_handle.is_active:
+        #         self.get_logger().warning('A goal is already active, rejecting the new goal')
+        #         return GoalResponse.REJECT
+        
         # validate the goal request
         if goal_request.target_number <= 0:
             self.get_logger().info('Rejecting the a goal: target_number <= 0')
             return GoalResponse.REJECT
+        
+        # Policy: preempt existing goal when receiving a new goal
+        # with self._goal_lock:
+        #     if self._goal_handle is not None and self._goal_handle.is_active:
+        #         self.get_logger().info('Aborting the current goal and accepting the new goal')
+        #         self._goal_handle.abort()
+            
         self.get_logger().info('Accepted the a goal!')
         return GoalResponse.ACCEPT
+    
+    def handle_accepted_goal(self, goal_handle: ServerGoalHandle):
+        with self._goal_lock:
+            if self._goal_handle is not None and self._goal_handle.is_active:
+                self._goal_queue.append(goal_handle)
+            else:
+                goal_handle.execute()
         
     def execute_callback(self, goal_handle: ServerGoalHandle):
+        with self._goal_lock:
+            self._goal_handle = goal_handle
+        
         self.get_logger().info('Executing `execute_callback`...')
         # get request from goal
         target_number = goal_handle.request.target_number
@@ -43,6 +82,10 @@ class CountUntilServer(Node):
         result = CountUntil.Result()
         
         for i in range(target_number):
+            # Handling the case when the existing goal got preempt due to a new goal recived (in the case of preempt policy)
+            if not goal_handle.is_active:
+                result.reached_number = counter
+                return result
             # Handling the cancel request
             if goal_handle.is_cancel_requested:
                 self.get_logger().warn("canceling the goal")
@@ -65,8 +108,15 @@ class CountUntilServer(Node):
         
         # and send the result
         result.reached_number = counter
+        self.execute_next_goal_from_queue()
         return result
     
+    def execute_next_goal_from_queue(self):
+        if len(self._goal_queue) != 0:
+            goal = self._goal_queue.pop(0)
+            goal.execute()
+        else:
+            self._goal_handle = None
         
     def cancel_callback(self, goal_handle: ServerGoalHandle):
         self.get_logger().warn("Received cancel request")
